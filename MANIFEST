@@ -1,3 +1,4 @@
+.gitignore
 bin/get_flash_videos.PL
 doc/get_flash_videos.pod
 get_flash_videos
@@ -13,6 +14,7 @@ lib/FlashVideo/Site/5min.pm
 lib/FlashVideo/Site/Abc.pm
 lib/FlashVideo/Site/About.pm
 lib/FlashVideo/Site/Amazon.pm
+lib/FlashVideo/Site/Aniboom.pm
 lib/FlashVideo/Site/Apple.pm
 lib/FlashVideo/Site/Arte.pm
 lib/FlashVideo/Site/Bbc.pm
@@ -55,6 +57,7 @@ lib/FlashVideo/Site/Myvideo.pm
 lib/FlashVideo/Site/Nbc.pm
 lib/FlashVideo/Site/Nfb.pm
 lib/FlashVideo/Site/Nicovideo.pm
+lib/FlashVideo/Site/Pbs.pm
 lib/FlashVideo/Site/Pennyarcade.pm
 lib/FlashVideo/Site/Redbull.pm
 lib/FlashVideo/Site/Redtube.pm
@@ -92,12 +95,9 @@ lib/FlashVideo/Utils.pm
 lib/FlashVideo/VideoPreferences.pm
 lib/FlashVideo/VideoPreferences/Account.pm
 lib/FlashVideo/VideoPreferences/Quality.pm
-Makefile
 Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
-mk/release.mk
-mk/targets.mk
 README
 t/google_video_search.t
 t/json.t

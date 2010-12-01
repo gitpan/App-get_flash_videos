@@ -30,8 +30,10 @@ use Text::Wrap;
 BEGIN {
   if(!$::SCRIPT_NAME) {
     # Are we running in development mode?
-    require FindBin;
-    unshift @INC, "$FindBin::Bin/lib";
+    require Cwd;
+    require File::Spec;
+    my($vol, $dir) = (File::Spec->splitpath(Cwd::realpath($0)))[0, 1];
+    unshift @INC, File::Spec->catpath($vol, File::Spec->catdir($dir, "lib"));
   }
 }
 
@@ -47,7 +49,7 @@ unshift @INC, \&plugin_loader;
 
 our $VERSION;
 BEGIN {
-  $VERSION = "1.24_01";
+  $VERSION = "1.24_02";
 }
 
 our %opt;
@@ -58,8 +60,11 @@ BEGIN {
   # On OSX we default to open, if mplayer isn't available
   $player = "open" if $^O =~ /darwin/ && !is_program_on_path("mplayer");
 
-  if(is_program_on_path("gnome-open") && !is_program_on_path("mplayer")) {
-    # If mplayer isn't available, but gnome-open is, use that.
+  if(is_program_on_path("xdg-open") && !is_program_on_path("mplayer")) {
+    # If mplayer isn't available, but xdg-open is, use that.
+    $player = "xdg-open";
+  } elsif(is_program_on_path("gnome-open") && !is_program_on_path("mplayer")) {
+    # Alternatively try gnome-open..
     $player = "gnome-open";
   } elsif(is_program_on_path("kde-open") && !is_program_on_path("mplayer")) {
     # Alternatively try kde-open..
@@ -353,6 +358,22 @@ sub download {
     } else {
       # HTTP
       $downloader = FlashVideo::Downloader->new;
+    }
+
+    # XXX: Needs some thought, but this hack works for Youku for now it seems.
+    if (ref $data eq 'ARRAY') {
+      my ($url, $part_number, $part_count, $part_size) = @$data;
+      $data = $url;
+      if (defined $part_number && defined $part_count) {
+        my $part_suffix = sprintf('.part%02d_of_%02d', $part_number, $part_count);
+        substr $file, rindex($file, '.'), 0, $part_suffix
+          if $part_count > 1;
+      }
+
+      if (defined $part_size && -f $file && -s $file == $part_size) {
+        info "Already downloaded $file ($part_size bytes)";
+        next;
+      }
     }
 
     my $size = $downloader->$action($data, $file, $browser) || return 0;
